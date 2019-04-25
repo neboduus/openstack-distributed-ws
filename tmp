@@ -23,3 +23,8 @@
    password: docker
    host: 172.24.4.7
    port: 5432
+
+
+openstack server create --image xenial-server-cloudimg-amd64 --flavor ds512M \
+    --security-group default --security-group LoadBalancer --security-group ICMP \
+    --security-group SSH --key-name xenial-kp --network net-1 load-balancer-test
