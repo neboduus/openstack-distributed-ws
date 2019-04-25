@@ -1,0 +1,341 @@
+Exam Dates:
+	Written: 14/06
+	Oral: 01/07
+
+	Written: 29/07
+	Oral: 19/08
+
+	Written: 23/08
+	Oral: 09/09
+
+My connection:
+  $ ssh -D 9732 ubuntu@217.77.95.88
+
+
+ToDo for Cloud Lab:
+  - create a new profile in your browser
+  (because we want the browser to go to the ssh
+  tunnel and communicate with OpenStack)
+      > for firefox:
+        $ firefox -ProfileManager
+      > Socks Host: localhost
+      > choose SOCKS v5
+  - Connection Settings
+  - best port -> easy to remember and has to not be already used
+
+  - after browser is configured we connect using ssh like so:
+    $ ssh -D 9732 ubuntu@217.77.95.88
+
+
+Launch Instances:
+  - Details: always put the description
+  - Source
+  - Flavour: size of your VMs
+  - Network: we have to attach the VM to some Network
+  - Network ports -> we dont need it, too advanced
+  - Security Groups: something like you can connect to those machines
+    if your ip comes from a specific ip range
+  - Key Pair: set the keys to connect to the VM (share your key with the partner)
+  - Configuration:
+    cloud-init -> injects some code into the VM
+  - Server Groups -> group servers, for example if you want to take
+    a screenshot for a group of servers
+  - Scheduler and Metadata -> advanced, only if you need them in your project
+
+Network:
+  - Topology:
+    > router has 2 ports to private network (one for IPv4 one for IPv6)
+  - Security Groups
+    > Egress -> outgoing traffic
+    > Ingress -> incoming traffic
+  - Floating IP
+    > ask for a public IP
+
+Object Store:
+  - mimic of Amazon Storage Interface
+  - Container is like your folder and could have different policies
+	- Volume Group allows you to take a screenshot of many volumes together
+
+
+Complex commands
+	- look at the help pages
+
+Admin is the overall admin of the cloud
+To be admin of the project you only need to be Member
+
+Network:
+	- routers only if we want to connect 2 networks with for ex with the public
+
+Instances:
+	- Source -> we are forced to use ciros.....
+	- Flavor is related to the size of the instance, of the machine
+		> OverCommitting -> when you split the cpu in more virtual ones (you feel
+		like having more cpu)
+	- Configuration (KEYWORD: cloud-init)
+		> you can write a script that does some configuration on your machine,like
+		installing some packages or sw first before everything
+	- Server Group allows to create a logical view of the server an also is related to
+	the scheduler. Another example is to ensue that for example a distributed database
+	is distributed among different physical machines even if I don t really know where
+	they are placed
+
+Floating IP are the public ones (private anyway in our case)
+Security Group works like a Firewall (I create one in order to be able to access
+the machine from the public network)
+
+df -h // show usage of resources within the VM
+
+screen
+	// terminal multiplexer - a command that allows you to be sure that a long running process
+	continue running even when I disconnect from the console
+	echo $TERM // on the remote
+
+
+- Create a security group for any kind of service
+
+
+Openstack commands:
+	- in order to connect to openstack we need a TOKEN
+	- find a file:
+			$ locate file
+			$ find / -iname *openrc*
+			$ find / -iname 'openrc'  -type f
+
+	- show env variables
+			$ printenv
+			$ printenv | grep ^OS #to search in env vars
+			$ env
+			$ set #also aliases functions
+
+	- in order to add the variables from the file in our ENV
+	we want to SOURCE the file, which means executing it in the actual ENV
+	(in our case we have to source both, admin and demo1 openrc files)
+			$ . /home/stack/devstack/openrc
+			or
+			$ source /home/stack/devstack/openrc
+
+			$ . /home/stack/devstack/openrc
+			$ . /home/stack/devstack/accrc/demo/demo
+ 			$ . /home/stack/devstack/accrc/admin/admin # If you want to be admin
+
+	- Application Credentials -> you generate for the app an username and password (the Token)
+
+	- Copy demo1 from our PC to the remote Ubuntu machines
+			$ scp -D 8888 ~/Downloads/demo1-openrc.sh ubuntu@217.77.95.88:/home/ubuntu
+
+	- List servers
+			$ openstack server list -c ID -c Name -c Status -f value
+
+	- ssh-agent not working?
+			$ eval $(ssh-agent)
+
+	Install docker on ubuntu
+		https://docs.docker.com/install/linux/docker-ce/ubuntu/
+
+	sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+	* Recap of the OpenStack Dashboard Tour
+	    member procedure to create a new instance
+	    create a network
+
+	    1. network topology
+	    2. network -> create network
+		    a. Network
+		    b. subnet (pay attention to that), gw declared later
+	    3. instance
+		    a. details
+		    b. source = base image, create a new volume [NO]
+		    c. [...]
+		    d. configuration = inject a series of command at start of the machine
+		    e. server group
+		    f. [...]
+		    g. metadata
+		    4. launch OS
+
+
+
+	* Glossary
+
+	external network = connection to the public network
+
+
+	#1 Find the configuration file to load in the shell
+	locate openrc
+	find / -iname *openrc*
+	--> /home/stack/devstack/openrc
+
+	find / -iname 'openrc'  -type f
+
+	#!/usr/bin/env bash
+	#
+	# source openrc [username] [projectname]
+	#
+	# Configure a set of credentials for $PROJECT/$USERNAME:
+	#   Set OS_PROJECT_NAME to override the default project 'demo'
+	#   Set OS_USERNAME to override the default user name 'demo'
+	#   Set ADMIN_PASSWORD to set the password for 'admin' and 'demo'
+
+	# NOTE: support for the old NOVA_* novaclient environment variables has
+	# been removed.
+
+	if [[ -n "$1" ]]; then
+	    OS_USERNAME=$1
+	fi
+	if [[ -n "$2" ]]; then
+	    OS_PROJECT_NAME=$2
+	fi
+
+	# Find the other rc files
+	RC_DIR=$(cd $(dirname "${BASH_SOURCE:-$0}") && pwd)
+
+	# Import common functions
+	source $RC_DIR/functions
+
+	 /home/stack/devstack/accrc/demo/demo
+
+	# Load local configuration
+	source $RC_DIR/stackrc
+
+	# Load the last env variables if available
+	.....
+
+	 # print eviroment variables in a shell
+	 printenv
+	 env
+	 set # also alisaes, functions
+
+	 #2 Import the variables in the current work shell in order to use the openstack shell on the target instance ( both '.' and 'source' are fine )
+	. /home/stack/devstack/openrc
+	. /home/stack/devstack/accrc/demo/demo
+	# . /home/stack/devstack/accrc/admin/admin # If you want to be admin
+
+	printenv | grep ^OS
+
+	 $ openstack project list
+	+----------------------------------+--------------------+
+	| ID                               | Name               |
+	+----------------------------------+--------------------+
+	| 3a6bf25e0e484a2aa589fb8a5618a943 | invisible_to_admin |
+	| 9f3d6c911b2e4bb7b6e9685bc906c27b | demo               |
+	+----------------------------------+--------------------+
+	$
+
+	#3 Compare the demo and the admin conf files
+	diff /home/stack/devstack/accrc/admin/admin /home/stack/devstack/accrc/demo/demo
+
+	#4 Add missing configuration files
+	#4.1 Download conf file
+	From the openstack dashboard
+
+	    In the top-right corner open the user panel -> Download Openrc file v3
+
+	    Project -> Api Access -> Download Openrc file v3
+
+
+	#4.2 Upload the file from the local machine to the remote one
+	scp -i ${PRIVATE_KEY} ${OPENRC_FILE}  ubuntu@${REMOTE_IP}:${OPENRC_FILE}
+	scp /home/dpizzolli/downloads/demo1-openrc.sh  ubuntu@217.77.95.97:
+
+	#4.3 Execute the file
+	source ${OPENRC_FILE}
+
+	#4.4 (Optional) To remove the request for the password:
+	(comment) echo "Please enter your OpenStack Password for project $OS_PROJECT_NAME as user $OS_USERNAME: "
+	(comment) read -sr OS_PASSWORD_INPUT
+	(edit)          export OS_PASSWORD=your_password
+
+	#5 Openstack commands
+
+	    openstack server list -c ID -c Name -c Status -f {csv,json,..}
+
+	    openstack server stop demo
+
+	    19681fad-43ec-42a5-9795-d40c458843f4 demo1 SHUTOFF
+
+	    openstack server show demo1_instance
+
+			openstack security group list
+			openstack security group rule list NAME --long
+
+	Upload files remotly, it uses ssh
+
+			rsync --progress -v -e ssh /path/to/file ubuntu@217.77.95.88:tmp/upload_dir
+
+	For creating Keys is better if generating the key pair and then upload only the public part.
+			openstack keypair create --public-key path_to_pub 'name'
+
+	Create a functional machine:
+			openstack flavor list
+			openstack image list
+
+			openstack server create --image cirros...... --flavor m1.tiny 'servername'
+
+
+Build Angular Image
+
+		docker build -t front-end:prod .
+
+	using dev environment
+
+		docker build -t front-end:dev --build-arg configuration=""
+
+	running it
+
+		docker run -p 80:80 my-angular-project:dev
+
+
+Nginx
+
+	To have launchd start nginx now and restart at login:
+
+		brew services start nginx
+
+	Or, if you don't want/need a background service you can just run:
+
+		nginx
+
+	The default place of nginx.conf on Mac after installing with brew is:
+
+		/usr/local/etc/nginx/nginx.conf
+
+
+
+Volume:
+	- Partition, Check, Format
+	  sudo fdisk /dev/vdb  (partitioning)
+	    n p 1 p w
+	  sudo hexdumo -C /dev/vdb (view content)
+	  sudo fdisk -l /dev/vdb (see partition)
+	  sudo mkfs.ext4 /dev/vdb1 (formatting)
+
+	- Mounting
+		mount /dev/vdb1 / (2nd parameter is mounting point)
+
+		# we create our directory for mounting point
+		mkdir -p /var/wwwdata
+		sudo mount /dev/vdb1 /var/www/data
+		sudo umount ...... # to dettach
+
+		# check mounted partitions, that are file systems
+		df -h
+
+		# mounting is ephemeral -> if machine reboots I have to remount it
+
+		# static file sys info
+		cat /etc/fstab
+
+		# we want to mount FS on boot
+
+		mount | tail n1 ...... missing, but just search for the fs from
+		mount command (only mount) and put the line related to the fs in
+		/etc/fstab
+
+		# to share file systems, use NFS...
+
+		# Object Store: Rclone command line allows you to save objects in the Onject
+		Store Container
+
+Forwarding ssh worker_connections
+
+	-A flag to tell to ssh-agent to forward also the public key for another connection
+	$ ssh ubuntu@217.77.95.88 -D 9732 -A

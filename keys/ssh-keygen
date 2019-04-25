@@ -1,0 +1,1 @@
+ssh-keygen -t rsa -b 4096 -C "${EMAIL:=marianalexandrudiaconu@gmail.com} ${SNAME:=Diaconu}, ${FNAME:=Marian Alexandru}" -f "${EMAIL}.key"

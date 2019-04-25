@@ -1,0 +1,25 @@
+ before_action :set_todo
+ before_action :set_todo_item, only: [:show, :update, :destroy]
+
+ # GET /todos/:todo_id/items
+ def index
+  render json: @todo.items, status: :ok
+ end
+
+ # GET /todos/:todo_id/items/:id
+ def show
+ end
+
+ # POST /todos/:todo_id/items
+ def create
+ end
+
+ default: &default
+   adapter: postgresql
+   encoding: unicode
+   database: my_db
+   pool: 5
+   username: postgres
+   password: docker
+   host: 172.24.4.7
+   port: 5432
