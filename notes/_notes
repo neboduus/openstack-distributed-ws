@@ -259,7 +259,7 @@ Openstack commands:
 
 	Upload files remotly, it uses ssh
 
-			rsync --progress -v -e ssh /path/to/file ubuntu@217.77.95.88:tmp/upload_dir
+			rsync --progress -v -e ssh /path/to/file ubuntu@217.77.95.88:/tmp/upload_dir
 
 	For creating Keys is better if generating the key pair and then upload only the public part.
 			openstack keypair create --public-key path_to_pub 'name'

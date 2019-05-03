@@ -1,4 +1,6 @@
 #!/bin/sh
+MYVAR="$(cat /etc/hostname)"
+sudo sed -i "2 i 127.0.1.1 ${MYVAR}" /etc/hosts
 set -e
 
 # This script is meant for quick & easy install via:
@@ -265,7 +267,7 @@ do_install() {
 			Error: this installer needs the ability to run commands as root.
 			We are unable to find either "sudo" or "su" available to make this happen.
 			EOF
-			exit 1
+			return 1
 		fi
 	fi
 
@@ -308,7 +310,7 @@ do_install() {
 
 		rhel|ol|sles)
 			ee_notice "$lsb_dist"
-			exit 1
+			return 1
 			;;
 
 		*)
@@ -365,7 +367,7 @@ do_install() {
 						echo
 						echo "ERROR: '$VERSION' not found amongst apt-cache madison results"
 						echo
-						exit 1
+						return 1
 					fi
 					search_command="apt-cache madison 'docker-ce-cli' | grep '$pkg_pattern' | head -1 | awk '{\$1=\$1};1' | cut -d' ' -f 3"
 					# Don't insert an = for cli_pkg_version, we'll just include it later
@@ -383,13 +385,13 @@ do_install() {
 				$sh_c "apt-get install -y -qq --no-install-recommends docker-ce$pkg_version >/dev/null"
 			)
 			echo_docker_as_nonroot
-			exit 0
+			return 0
 			;;
 		centos|fedora)
 			yum_repo="$DOWNLOAD_URL/linux/$lsb_dist/$REPO_FILE"
 			if ! curl -Ifs "$yum_repo" > /dev/null; then
 				echo "Error: Unable to curl repository file $yum_repo, is it valid?"
-				exit 1
+				return 1
 			fi
 			if [ "$lsb_dist" = "fedora" ]; then
 				pkg_manager="dnf"
@@ -433,7 +435,7 @@ do_install() {
 						echo
 						echo "ERROR: '$VERSION' not found amongst $pkg_manager list results"
 						echo
-						exit 1
+						return 1
 					fi
 					search_command="$pkg_manager list --showduplicates 'docker-ce-cli' | grep '$pkg_pattern' | tail -1 | awk '{print \$2}'"
 					# It's okay for cli_pkg_version to be blank, since older versions don't support a cli package
@@ -453,18 +455,22 @@ do_install() {
 				$sh_c "$pkg_manager install -y -q docker-ce$pkg_version"
 			)
 			echo_docker_as_nonroot
-			exit 0
+			return 0
 			;;
 		*)
 			echo
 			echo "ERROR: Unsupported distribution '$lsb_dist'"
 			echo
-			exit 1
+			return 1
 			;;
 	esac
-	exit 1
+	return 1
 }
 
 # wrapped up in a function so that we have some protection against only getting
 # half the file during "curl | sh"
-do_install
+do_install 
+sudo mkdir -p /home/ubuntu/docker/volumes/postgres
+sudo docker pull postgres
+sudo docker run --name pg-docker -e POSTGRES_PASSWORD=docker -d -p 5432:5432 -v /home/ubuntu/docker/volumes/postgres:/var/lib/postgresql/data  postgres
+exit 0

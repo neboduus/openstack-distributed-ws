@@ -1,5 +1,11 @@
 #!/bin/bash
 
+openstack security group delete todos-AllowLoadBalancer
+openstack security group delete todos-LoadBalancer
+
+openstack security group delete todos-AllowServer
+openstack security group delete todos-Server
+
 openstack security group delete todos-SSH
 openstack security group delete todos-ICMP
 

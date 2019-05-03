@@ -28,3 +28,10 @@
 openstack server create --image xenial-server-cloudimg-amd64 --flavor ds512M \
     --security-group default --security-group LoadBalancer --security-group ICMP \
     --security-group SSH --key-name xenial-kp --network net-1 load-balancer-test
+
+
+ERRORI E DOMANDE:
+    - creazione volumi
+    You are not authorized to perform the requested action: identity:list_projects. (HTTP 403) (Request-ID: req-72486f66-3fe5-4658-916e-3a49d6f3b336)
+
+    - dimensione dell'init (10240 ?????)
