@@ -469,8 +469,20 @@ do_install() {
 
 # wrapped up in a function so that we have some protection against only getting
 # half the file during "curl | sh"
-do_install 
-sudo mkdir -p /home/ubuntu/docker/volumes/postgres
+do_install
+sudo fdisk /dev/vdb <<EOF
+n
+p
+1
+
+
+w
+EOF
+sudo mkfs.ext4 /dev/vdb1
+sudo mkdir -p $HOME/docker/volumes
+sudo mount /dev/vdb1 $HOME/docker/volumes
+sudo mkdir -p $HOME/docker/volumes/postgres
+echo "UUID=$(lsblk -no UUID /dev/vdb1) $HOME/docker/volumes $(lsblk -no FSTYPE /dev/vdb1) defaults 0 0" | sudo tee -a /etc/fstab
 sudo docker pull postgres
-sudo docker run --name pg-docker -e POSTGRES_PASSWORD=docker -d -p 5432:5432 -v /home/ubuntu/docker/volumes/postgres:/var/lib/postgresql/data  postgres
+sudo docker run --name pg-docker -e POSTGRES_PASSWORD=docker -d -p 5432:5432 -v $HOME/docker/volumes/postgres:/var/lib/postgresql/data  postgres
 exit 0
