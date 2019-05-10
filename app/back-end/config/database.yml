@@ -5,7 +5,7 @@ default: &default
   pool: 5
   username: postgres
   password: docker
-  host: 10.20.31.26
+  host: 10.20.32.25
   port: 5432
 
 development:
@@ -15,5 +15,5 @@ development:
   pool: 5
   username: postgres
   password: docker
-  host: 10.20.31.26
+  host: 10.20.32.25
   port: 5432

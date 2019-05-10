@@ -1,10 +1,13 @@
+require 'socket'
+
 class TodosController < ApplicationController
  before_action :set_todo, only: [:show, :update, :destroy]
 
  # GET /todos
  def index
   @todos = Todo.all
-  render json: @todos, status: :ok
+  data = {data: @todos, ip: '172.24.4.25'}
+  render json: data, status: :ok
  end
 
  # POST /todos
@@ -12,7 +15,8 @@ class TodosController < ApplicationController
   @todo = Todo.create!(todo_params)
   if @todo.valid?
    @todo.save!
-   render json: @todo, status: :created
+   data = {data: @todo, ip: '172.24.4.25'}
+   render json: data, status: :created
   else
    render json:@todo.errors, status: :bad_request
   end
@@ -20,7 +24,8 @@ class TodosController < ApplicationController
 
  # GET /todos/:id
  def show
-  render json: @todo, status: :ok
+  data = {data: @todo, ip: '172.24.4.25'}
+  render json: data, status: :ok
  end
 
  # PUT /todos/:id
@@ -42,6 +47,6 @@ class TodosController < ApplicationController
  end
 
  def set_todo
-  @todo = Todo.find(params[:id])
+  @todo = Todo.new
  end
 end

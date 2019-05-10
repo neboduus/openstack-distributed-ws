@@ -1,4 +1,5 @@
 class Todo < ApplicationRecord
+ attr_accessor :ip
  # relation
  has_many :items, dependent: :destroy
  # validation

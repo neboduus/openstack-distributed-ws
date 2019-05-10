@@ -470,8 +470,6 @@ do_install() {
 # wrapped up in a function so that we have some protection against only getting
 # half the file during "curl | sh"
 do_install
-
 sudo docker pull neboduus/load-balancer:v1
 sudo docker run -p 80:80 -d neboduus/load-balancer:v1
-
 exit 0

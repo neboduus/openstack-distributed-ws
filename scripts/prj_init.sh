@@ -8,16 +8,20 @@ openstack project create \
     ${PROJECT_NAME}
 
 openstack user create -f json --project ${PROJECT_NAME} --password "eval" ${EVAL_USERNAME}
-openstack role add --project ${PROJECT_NAME} --user ${EVAL_USERNAME} admin
+openstack role add --project ${PROJECT_NAME} --user ${EVAL_USERNAME} member
 openstack role assignment list --user ${EVAL_USERNAME} --project ${PROJECT_NAME} --names
 
 openstack user create -f json --project todos-ws --password "password" todo
 openstack role add --project todos-ws --user todo admin
 openstack role assignment list --user todo --project todos-ws --names
 
-openstack volume create --size 5 --type lvmdriver-1 \
-    --description "Stores data for both server-1 and server-2" \
-    --project todos-ws db-volume
+# create floating ip (see email, need to be created as admin)
+openstack floating ip create --floating-ip-address 172.24.4.28 --project todos-ws public
+openstack floating ip create --floating-ip-address 172.24.4.21 --project todos-ws public
+openstack floating ip create --floating-ip-address 172.24.4.6 --project todos-ws public
+openstack floating ip create --floating-ip-address 172.24.4.25 --project todos-ws public
+
+
 
 
 # Logging IDs in order to manually delete resources if some error occur
