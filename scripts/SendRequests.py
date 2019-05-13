@@ -13,7 +13,9 @@ URL = "http://172.24.4.21/todos/1"
 
 res_ip = []
 
-for i in range(0, 40):
+tot_num_req = 40
+
+for i in range(0, tot_num_req):
 	r = requests.get(url = URL)
 	data = r.json()
 	res_ip.append(data['ip'])
@@ -22,5 +24,7 @@ different_ip = Counter(res_ip).keys()
 counter_x_ip = Counter(res_ip).values()
 
 for i in range (0, len(different_ip)):
-	print("%s serves %s requests" % (different_ip[i], counter_x_ip[i]))
-
+	ip = different_ip[i]
+	count = counter_x_ip[i]
+	percent = (count / float(tot_num_req)) * 100
+	print("%s serves %s requests (%s%%)" % (ip, count, round(percent, 1)))
