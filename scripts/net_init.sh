@@ -31,7 +31,7 @@ openstack security group rule create --project todos-ws --dst-port 22 --protocol
 openstack security group create --project todos-ws todos-LoadBalancer
 
 openstack security group create --project todos-ws todos-AllowLoadBalancer
-openstack security group rule create --project todos-ws --dst-port 3000 --protocol tcp \
+openstack security group rule create --project todos-ws --dst-port 80 --protocol tcp \
   --remote-group todos-LoadBalancer todos-AllowLoadBalancer
 
 openstack security group create --project todos-ws todos-Server
