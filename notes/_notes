@@ -8,9 +8,6 @@ Exam Dates:
 	Written: 23/08
 	Oral: 09/09
 
-My connection:
-  $ ssh -D 9732 ubuntu@217.77.95.88
-
 
 ToDo for Cloud Lab:
   - create a new profile in your browser
