@@ -14,7 +14,7 @@ data
 * Database Server ​ - PostgreSQL server that acts as a remote RDBMS
 
 ## How to install
-In order to install al the stff you need first of all OpenStack installed. This is a difficult task, in fact we have used 3-rd parties Openstack services.
+In order to install al the stuff you need first of all OpenStack installed. This is a difficult task, in fact we have used 3-rd parties Openstack services.
 Once you have Openstack, you can use all the scripts inside the project. In /scripts there are the scripts for generating the infrastructure and in /app you have the Docker files for deploying the applications mentioned above.
 
 
